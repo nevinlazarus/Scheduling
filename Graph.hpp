@@ -36,17 +36,11 @@ class Graph {
     //Such that people can be scheduled to their available time slots
     void schedule() {
 
-        const int maxHours = 15;
-        const int maxPeople = 3;
+        
         //set up the graph
         
         addNode("src");
         addNode("sink");
-        
-        
-        std::vector<std::string> people; //list of people
-        std::vector<std::string> time; //list of time slots
-        std::map<std::string, int> availableHours;
         
         //for each node in the graph
         for (auto n : nodes) {             
@@ -66,7 +60,11 @@ class Graph {
         hours.clear();        
         std::list<std::string> path;
         //while there is a path from source to sink
-        while (BFS("src", "sink", path)) {            
+        while (BFS("src", "sink", path)) {  
+//            for (auto p : path) {
+//                std::cout << p << " ";
+//            }
+//            std::cout << std::endl << "------------------------------" << std::endl;    
             std::string prev = "";
             for (std::string i : path) { 
                 if (prev != "") {
@@ -84,7 +82,7 @@ class Graph {
             }
             path.clear();
         }
-                        
+                    
         //for each timeslot
         for (auto t : time) {
             std::cout << "People for time: " << t << std::endl;
@@ -115,28 +113,43 @@ class Graph {
         
     }
 
-    
+    //checks if there is a path from source to dest
+    //stores it in path
     bool BFS(const std::string &src, const std::string &dest, std::list<std::string> &path) {
 
         if (src == dest) return true;
-        
-        std::priority_queue<std::pair<int, std::string>> q;
+        //priority queue of nodes to visit
+        std::priority_queue<std::pair<int, std::string>> q; 
+        //spanning tree for the graph
+        //stores the previous node visited
         std::map<std::string, std::string> span;
 
         span[src] = "";
-        q.push(std::pair<int, std::string>(-1, src));
+        q.push(std::pair<int, std::string>(0, src));
         while (q.size()) {            
             
             auto pair = q.top(); q.pop();            
             auto curr = pair.second;
             if (pair.second == dest) break;
-            
+            //std::cout << pair.second << std::endl;
             for (auto n : nodes[curr].edges) {
 
                 if (n.first == src || n.second == 0) continue;
                 
-                if (span[n.first] == "") {
-                    q.push(std::pair<int, std::string>(-1 * hours[n.first], n.first));
+                if (span[n.first] == "") { //nodes is unvisited
+
+                    if (std::find(time.begin(), time.end(), n.first) != time.end()) {
+                        //pushes the times to the end
+                        //ordered by the amount of hours people are available
+                        q.push(std::pair<int, std::string>(-1000 + (availableHours[curr]*maxHours - (hours[curr])), n.first)); 
+                    } else {                
+                        if (hours[n.first]) { //people who have been assigned more hours go to the back of the queue
+                            q.push(std::pair<int, std::string>(-maxHours * (hours[n.first]), n.first));    
+                        } else {
+                            q.push(std::pair<int, std::string>(maxHours - (availableHours[n.first]), n.first));    
+                        }
+                    }
+                                        
                     span[n.first] = curr;
                 }
             }
@@ -175,7 +188,12 @@ class Graph {
     private:
     
     std::map<std::string, Node> nodes;
-    std::map<std::string, int> hours;
+    std::map<std::string, int> hours; //hours people have been assigned
+    std::vector<std::string> people; //list of people
+    std::vector<std::string> time; //list of time slots
+    std::map<std::string, int> availableHours; //hours people have totally
+    const int maxHours = 15;
+    const int maxPeople = 1;
     
 };
 
