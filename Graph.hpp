@@ -14,16 +14,17 @@ class Graph {
         
     }
     
-    void addNode(std::string name) {
-        nodes[name] = Node(name);
+    void addNode(std::string name, bool isPerson) {
+        nodes[name] = Node(name, isPerson);
     }
     
     void addEdge(std::string u, std::string v, int w=1) {
-        if (!nodes.count(v)) {
-            addNode(v);
-        }
+
         if (!nodes.count(u)) {
-            addNode(u);
+            addNode(u, true); //adds a person node
+        }
+        if (!nodes.count(v)) {
+            addNode(v, false); //adds a time node
         }
         nodes[u].addEdge(v, w);
     }
@@ -39,13 +40,13 @@ class Graph {
         
         //set up the graph
         
-        addNode("src");
-        addNode("sink");
+        addNode("src", false);
+        addNode("sink", false);
         
         //for each node in the graph
         for (auto n : nodes) {             
             if (n.first != "src" && n.first != "sink") {
-                if (n.second.edges.size()) { //its a person
+                if (n.second.isPerson) { //its a person
                     availableHours[n.first] += n.second.edges.size();
                     addEdge("src", n.first, maxHours);
                     people.push_back(n.first);
@@ -61,10 +62,10 @@ class Graph {
         std::list<std::string> path;
         //while there is a path from source to sink
         while (BFS("src", "sink", path)) {  
-//            for (auto p : path) {
-//                std::cout << p << " ";
-//            }
-//            std::cout << std::endl << "------------------------------" << std::endl;    
+            for (auto p : path) {
+                std::cout << p << " ";
+            }
+            std::cout << std::endl << "------------------------------" << std::endl;    
             std::string prev = "";
             for (std::string i : path) { 
                 if (prev != "") {
@@ -76,8 +77,7 @@ class Graph {
                     }   
                     ++hours[i];
                     ++nodes[i].edges[prev];
-                }
-                
+                }                
                 prev = i;
             }
             path.clear();
@@ -122,45 +122,48 @@ class Graph {
         std::priority_queue<std::pair<int, std::string>> q; 
         //spanning tree for the graph
         //stores the previous node visited
-        std::map<std::string, std::string> span;
+        std::map<std::string, std::pair<std::string, int>> span;
 
-        span[src] = "";
+        span[src] = {"", 0};
         q.push(std::pair<int, std::string>(0, src));
         while (q.size()) {            
             
             auto pair = q.top(); q.pop();            
+            auto currQValue = pair.first;
             auto curr = pair.second;
             if (pair.second == dest) break;
             //std::cout << pair.second << std::endl;
             for (auto n : nodes[curr].edges) {
 
-                if (n.first == src || n.second == 0) continue;
+                if (n.first == src || n.second == 0) continue; //if its the source node or the edge's weight is 0
                 
-                if (span[n.first] == "") { //nodes is unvisited
-
-                    if (std::find(time.begin(), time.end(), n.first) != time.end()) {
-                        //pushes the times to the end
-                        //ordered by the amount of hours people are available
-                        q.push(std::pair<int, std::string>(-1000 + (availableHours[curr]*maxHours - (hours[curr])), n.first)); 
+                if (span[n.first].first == "" || !nodes[n.first].isPerson) { //nodes is unvisited
+                    int queueVal = 0;
+                    if (nodes[n.first].isPerson) {
+                        //pushes the person node onto the queue                       
+                        
+                        if (availableHours[n.first] - (hours[n.first]) == 0) continue; //a person has no free hours
+                        queueVal = 1000  / (hours[n.first] + 1);
                     } else {                
-                        if (hours[n.first]) { //people who have been assigned more hours go to the back of the queue
-                            q.push(std::pair<int, std::string>(-maxHours * (hours[n.first]), n.first));    
-                        } else {
-                            q.push(std::pair<int, std::string>(maxHours - (availableHours[n.first]), n.first));    
-                        }
+                        //pushes the times to the end
+                        queueVal = -1000 / (hours[curr] + 1);
                     }
+                    
                                         
-                    span[n.first] = curr;
+                    if (span[n.first].first == "" || span[n.first].second < currQValue) {
+                        span[n.first] = std::pair<std::string, int>(curr, currQValue);
+                        q.push(std::pair<int, std::string>(queueVal, n.first));        
+                    }
                 }
             }
         }
         
-        if (span[dest] == "") return false;
-        std::string curr = span[dest];
+        if (span[dest].first == "") return false;
+        std::string curr = span[dest].first;
         path.push_front(dest);
         while (curr != "") {
             path.push_front(curr);
-            curr = span[curr];
+            curr = span[curr].first;
         }
         return true;
     }
@@ -169,19 +172,23 @@ class Graph {
         friend class Graph;
         public:
         Node() { }    
-        Node(std::string s) : name{s} { }
+        Node(std::string s, bool person) : name{s}, flowCount{0}, isPerson{person} { }
         
         void addEdge(std::string v, int value = 1) {
-
-            edges[v] = value;
+            flowCount += value;
+            edges[v] = value;            
         }
         
         void removeEdge(std::string v) {
             edges.erase(v);
         }
         
+        
+        
         private:
         std::string name;
+        int flowCount;
+        bool isPerson;
         std::map<std::string, int> edges;        
     };
     

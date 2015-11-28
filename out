@@ -1,69 +1,119 @@
+src yingran wed15 sink 
+------------------------------
+src olivia wed14 sink 
+------------------------------
+src nevin wed13 sink 
+------------------------------
+src henry wed12 sink 
+------------------------------
+src christine wed11 sink 
+------------------------------
+src jeremy tue15 sink 
+------------------------------
+src antheny tue14 sink 
+------------------------------
+src peter tue13 sink 
+------------------------------
+src peter fri15 sink 
+------------------------------
+src olivia fri14 sink 
+------------------------------
+src nevin fri13 sink 
+------------------------------
+src peter fri12 sink 
+------------------------------
+src lozza tue12 sink 
+------------------------------
+src lozza mon14 sink 
+------------------------------
+src henry mon11 sink 
+------------------------------
+src emmanuel tue11 sink 
+------------------------------
+src emmanuel thu11 sink 
+------------------------------
+src yuvraj thu15 sink 
+------------------------------
+src vish thu14 sink 
+------------------------------
+src vish mon13 sink 
+------------------------------
+src vish fri11 sink 
+------------------------------
+src sam thu13 sink 
+------------------------------
+src bao thu12 sink 
+------------------------------
+src bao mon12 sink 
+------------------------------
+src alicia mon15 sink 
+------------------------------
 People for time: fri11
 vish 
 People for time: fri12
 peter 
 People for time: fri13
-peter 
+nevin 
 People for time: fri14
-antheny 
-People for time: fri15
-antheny 
-People for time: mon11
-peter 
-People for time: mon12
-henry 
-People for time: mon13
-lozza 
-People for time: mon14
-henry 
-People for time: mon15
 olivia 
+People for time: fri15
+peter 
+People for time: mon11
+henry 
+People for time: mon12
+bao 
+People for time: mon13
+vish 
+People for time: mon14
+lozza 
+People for time: mon15
+alicia 
 People for time: thu11
-christine 
+emmanuel 
 People for time: thu12
 bao 
 People for time: thu13
-vish 
-People for time: thu14
 sam 
+People for time: thu14
+vish 
 People for time: thu15
 yuvraj 
 People for time: tue11
-henry 
-People for time: tue12
 emmanuel 
+People for time: tue12
+lozza 
 People for time: tue13
-henry 
+peter 
 People for time: tue14
-alicia 
+antheny 
 People for time: tue15
 jeremy 
 People for time: wed11
-henry 
+christine 
 People for time: wed12
 henry 
 People for time: wed13
-henry 
+nevin 
 People for time: wed14
-carmen 
+olivia 
 People for time: wed15
 yingran 
 
 Hours Per Person: 
 alicia: 1/2
-antheny: 2/8
-bao: 1/2
-carmen: 1/4
+antheny: 1/8
+bao: 2/2
+carmen: 0/4
 christine: 1/7
-emmanuel: 1/4
-henry: 7/14
+emmanuel: 2/4
+henry: 2/14
 jeremy: 1/6
-lozza: 1/7
-nevin: 0/15
-olivia: 1/6
+lozza: 2/7
+nevin: 2/15
+olivia: 2/6
 peter: 3/7
 sam: 1/4
-vish: 2/5
+vish: 3/5
 yingran: 1/2
 yuvraj: 1/4
 Checking completition: 
