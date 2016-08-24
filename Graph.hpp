@@ -85,11 +85,11 @@ class Graph {
                     
         //for each timeslot
         for (auto t : time) {
-            std::cout << "People for time: " << t << std::endl;
+            std::cout << t << "\t";// << std::endl;
             for (auto connections : nodes[t].edges) {
                 if (connections.first == "sink") continue;
                 //check who is available for those times
-                std::cout << connections.first << " ";
+                std::cout << connections.first << "\t";
             }
             std::cout << std::endl;
         }
@@ -146,7 +146,7 @@ class Graph {
                         queueVal = 1000  / (hours[n.first] + 1);
                     } else {                
                         //pushes the times to the end
-                        queueVal = -1000 / (hours[curr] + 1);
+                        queueVal = -1000000 + (1000 / (hours[curr] + 1));
                     }
                     
                                         
@@ -199,8 +199,8 @@ class Graph {
     std::vector<std::string> people; //list of people
     std::vector<std::string> time; //list of time slots
     std::map<std::string, int> availableHours; //hours people have totally
-    const int maxHours = 15;
-    const int maxPeople = 1;
+    int maxHours = 20;
+    int maxPeople = 8;
     
 };
 

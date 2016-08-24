@@ -1,0 +1,140 @@
+src nevin wed15 sink 
+------------------------------
+src martin wed15 sink 
+------------------------------
+src tanya wed14 sink 
+------------------------------
+src haydon wed14 sink 
+------------------------------
+src carmen wed13 sink 
+------------------------------
+src cara wed13 sink 
+------------------------------
+src andrew wed12 sink 
+------------------------------
+src mike tue13 sink 
+------------------------------
+src michael tue12 sink 
+------------------------------
+src jenny mon14 sink 
+------------------------------
+src ria mon13 sink 
+------------------------------
+src tanya wed12 sink 
+------------------------------
+src haydon wed11 sink 
+------------------------------
+src andrew wed11 sink 
+------------------------------
+src martin tue15 sink 
+------------------------------
+src carmen tue14 sink 
+------------------------------
+src nevin tue13 sink 
+------------------------------
+src mike tue12 sink 
+------------------------------
+src michael tue11 sink 
+------------------------------
+src cara thu14 sink 
+------------------------------
+src jenny fri12 sink 
+------------------------------
+src haydon tue15 sink 
+------------------------------
+src tanya tue14 sink 
+------------------------------
+src nevin tue11 sink 
+------------------------------
+src martin thu15 sink 
+------------------------------
+src andrew thu14 sink 
+------------------------------
+src michael thu12 sink 
+------------------------------
+src carmen thu12 sink 
+------------------------------
+src cara mon14 sink 
+------------------------------
+src mike fri13 sink 
+------------------------------
+src jenny fri11 sink 
+------------------------------
+src nevin thu15 sink 
+------------------------------
+src andrew thu13 sink 
+------------------------------
+src michael thu11 sink 
+------------------------------
+src tanya mon15 sink 
+------------------------------
+src martin mon15 sink 
+------------------------------
+src carmen mon13 sink 
+------------------------------
+src cara mon12 sink 
+------------------------------
+src mike fri12 sink 
+------------------------------
+src haydon fri11 sink 
+------------------------------
+src nevin thu13 sink 
+------------------------------
+src andrew thu11 sink 
+------------------------------
+src michael mon12 sink 
+------------------------------
+src tanya mon11 sink 
+------------------------------
+src cara mon11 sink 
+------------------------------
+src martin fri15 sink 
+------------------------------
+src carmen fri14 sink 
+------------------------------
+src nevin fri15 sink 
+------------------------------
+src martin fri14 sink 
+------------------------------
+src cara fri13 sink 
+------------------------------
+fri11	haydon	jenny	
+fri12	jenny	mike	
+fri13	cara	mike	
+fri14	carmen	martin	
+fri15	martin	nevin	
+mon11	cara	tanya	
+mon12	cara	michael	
+mon13	carmen	ria	
+mon14	cara	jenny	
+mon15	martin	tanya	
+thu11	andrew	michael	
+thu12	carmen	michael	
+thu13	andrew	nevin	
+thu14	andrew	cara	
+thu15	martin	nevin	
+tue11	michael	nevin	
+tue12	michael	mike	
+tue13	mike	nevin	
+tue14	carmen	tanya	
+tue15	haydon	martin	
+wed11	andrew	haydon	
+wed12	andrew	tanya	
+wed13	cara	carmen	
+wed14	haydon	tanya	
+wed15	martin	nevin	
+
+Hours Per Person: 
+andrew: 5/12
+cara: 6/9
+carmen: 5/8
+haydon: 4/11
+jenny: 3/3
+martin: 6/12
+michael: 5/6
+mike: 4/5
+nevin: 6/14
+ria: 1/1
+tanya: 5/9
+Checking completition: 
+true

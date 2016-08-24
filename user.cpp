@@ -11,6 +11,8 @@ int main(int argc, char * argv[]) {
     while (tmp != "end") {
         
         if (std::isdigit(tmp.back())) {
+            
+
             g.addEdge(person, tmp);
         } else {
             person = tmp;
