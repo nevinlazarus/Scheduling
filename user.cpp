@@ -1,28 +1,29 @@
 #include <iostream>
-#include "Graph.hpp"
+#include "Step.cpp"
 
 
 int main(int argc, char * argv[]) {
-    Graph g;
 
+
+    State s;
     std::string tmp;
     std::cin >> tmp;
     std::string person;
     while (tmp != "end") {
-        
         if (std::isdigit(tmp.back())) {
             
-
-            g.addEdge(person, tmp);
+            s.addPerson(person);
+            s.addTime(person, tmp);
+//            g.addEdge(person, tmp);
         } else {
             person = tmp;
             
         }
         std::cin >> tmp;
     }    
-
-    g.schedule();
+    s.run();
 
     return 0;
+  
 }
 
