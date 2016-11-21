@@ -20,8 +20,9 @@ int main(int argc, char * argv[]) {
             
         }
         std::cin >> tmp;
-    }    
-    s.run();
+    }
+    int i = 0; 
+    while (!s.run(i++));
 
     return 0;
   
