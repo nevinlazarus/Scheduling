@@ -1,17 +1,19 @@
 #include <iostream>
+#include <fstream>
 #include "Step.cpp"
 
 
 int main(int argc, char * argv[]) {
-    if (argc < 2) {
-      printf("Need to add how many people per shift");
+    if (argc < 3) {
+      printf("Need to add how many people per shift and file name");
       return 1;
     }
 
-
+    std::ifstream input;
+    input.open(argv[2]);
     State s(atoi(argv[1]));
     std::string tmp;
-    std::cin >> tmp;
+    input >> tmp;
     std::string person;
     while (tmp != "end") {
         if (std::isdigit(tmp.back())) {
@@ -23,7 +25,7 @@ int main(int argc, char * argv[]) {
             person = tmp;
             
         }
-        std::cin >> tmp;
+        input >> tmp;
     }    
     s.run();
 
