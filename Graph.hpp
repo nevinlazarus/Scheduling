@@ -89,7 +89,7 @@ class Graph {
             for (auto connections : nodes[t].edges) {
                 if (connections.first == "sink") continue;
                 //check who is available for those times
-                std::cout << connections.first << "\n";
+                std::cout << connections.first << "\t";
             }
             std::cout << std::endl;
         }
