@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <string>
 #include <random>
+#include <fstream>
 
 
 class State;
@@ -186,21 +187,23 @@ class State {
    }
 
   void print() {
+    std::ofstream out;
+    out.open("output.txt");
     int total = 0;
     for (auto p : people) {
-      std::cout << p.first << ": ";
+      out << p.first << ": ";
       for (auto t : people[p.first].assignedTime) {
         if (t.second) {
-          std::cout << t.first << " ";
+          out << t.first << " ";
         }
       }
-      std::cout << p.second.countHours() / p.second.countFree() << " "; 
-      std::cout << p.second.countHours() << " / ";
-      std::cout << p.second.countFree() << " ";
+      out << p.second.countHours() / p.second.countFree() << " "; 
+      out << p.second.countHours() << " / ";
+      out << p.second.countFree() << " ";
       total += p.second.countHours();
-      std::cout << std::endl;
+      out << std::endl;
     }
-    std::cout << total << std::endl;
+    out << total << std::endl;
   }
 
   void addPerson(std::string name) {
