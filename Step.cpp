@@ -38,8 +38,8 @@ class Person {
   }
 
   bool unassignTime(std::string t) {
-    if (assignedTime[t]) {
-      assignedTime[t] = false;
+    if (freeTime[t] && assignedTime[t]) {
+      assignedTime.erase(t);
       return true;
     }
     return false;
@@ -84,8 +84,8 @@ class State {
      cost = 0;
      peopleList = s->peopleList;
      people = s->people;
-     timeToPeople = s->timeToPeople;
-     peopleNeeded = s->peopleNeeded;
+
+     timeslot = s->timeslot;
      peoplePerSlot = s->peoplePerSlot;
   }
 
@@ -101,31 +101,55 @@ class State {
     for (auto person : people) {
       v.push_back(person.first);
     }
+    // sorts the people by the proportion of time they've been shifted on
     std::sort(v.begin(), v.end(), [&](const std::string &a, const std::string &b) {
         return (people[a].countHours() / people[a].countFree()) < (people[b].countHours() / people[b].countFree());  
-        
         });
-    for (auto time = peopleNeeded.begin(); time != peopleNeeded.end(); ++time) {
+    
+    // for each timeslot
+    for (auto time = timeslot.begin(); time != timeslot.end(); ++time) {
       for (unsigned int i = 0; i < v.size() / 4; ++i) {
-        auto person = std::make_pair(v[i], people[v[i]]);
-        if (!people[person.first].freeTime[time->first]) {
+        auto newPerson = std::make_pair(v[i], people[v[i]]);
+        // if they are already assigned to this timeslot
+        
+        // if they are not free at this time
+        if (!people[newPerson.first].freeTime[time->first]) {
           continue;
         }
+        int leaderCount = 0;
+        for (auto p : peopleList) {
+          if (people[p.first].leader && people[p.first].assignedTime[time->first]) {           
+            leaderCount++;            
+          }
+        }
+        
         // the current person hasn't been assigned and is free at that time
-        for (auto assignedPerson : timeToPeople[time->first]) {
+        for (auto assignedPerson : peopleList) {
+          // if the person isn't assigned
+          if (!people[assignedPerson.first].assignedTime[time->first]) continue;
+          // don't swap with yourself
+          if (assignedPerson.first == newPerson.first) continue;
+          if (leaderCount <= leadersRequired) {            
+            // cannot replace shift leader with a non-leader
+            if (people[assignedPerson.first].leader && !people[newPerson.first].leader) {  
+              continue;
+            }
+          }
           State newState = State();
           newState.cost = 0;
           newState.people = people;
 
           // if we can swap the two people on shift
+          // create a new state
           if (newState.people[assignedPerson.first].unassignTime(time->first) 
-              && newState.people[person.first].assignTime(time->first)) {
+              && newState.people[newPerson.first].assignTime(time->first)) {
             newState.peopleList = peopleList;
-            newState.timeToPeople = timeToPeople;
-            newState.peopleNeeded = peopleNeeded;
+            
+            newState.timeslot = timeslot;
             newState.days = days;
             newState.times = times;
-
+            newState.people[assignedPerson.first].unassignTime(time->first);
+            newState.people[newPerson.first].assignTime(time->first);
             ret.push_back(newState);
           }
         }
@@ -140,37 +164,40 @@ class State {
       randomPeople.push_back(p.first);
     }
 
+	// randomly shuffles the people
     srand(unsigned(time(NULL)));
     std::random_shuffle(randomPeople.begin(), randomPeople.end());
 
-    // for each slot
-    for (auto t = peopleNeeded.begin(); t != peopleNeeded.end(); ++t) {
+    // for each timeslot
+    for (auto t = timeslot.begin(); t != timeslot.end(); ++t) {
       // assign as many people as needed
-      if (peopleNeeded[t->first] > 0) {
-        for (auto p = randomPeople.begin(); p != randomPeople.end(); ++p) {
-          // assign time to the person
-          if (people[*p].leader && people[*p].assignTime(t->first)) {
-            peopleNeeded[t->first]--;
-            timeToPeople[t->first][*p] = true;
-            break;
-          }
+      for (auto p = randomPeople.begin(); p != randomPeople.end(); ++p) {
+        // If enough leaders have been allocated break
+        if (timeslot[t->first] <= 0 || timeslot[t->first] < peoplePerSlot - leadersRequired) {
+          break;
         }
-        for (auto p = people.begin(); p != people.end(); ++p) {
-          if (peopleNeeded[t->first] == 0) {
-            break;
-          }
-          // assign time to the person
-          if (p->second.assignTime(t->first)) {
-            peopleNeeded[t->first]--;
-            timeToPeople[t->first][p->first] = true;
-          }
-        }   
+        // assign shift leaders to timeslots first
+        if (people[*p].leader && people[*p].assignTime(t->first)) {
+          timeslot[t->first]--;
+        }
       }
+      // assign all people as normal
+      for (auto p = randomPeople.begin(); p != randomPeople.end(); ++p) {
+        if (timeslot[t->first] <= 0) {
+          break;
+        }
+        // assign time to the person
+        if (people[*p].assignTime(t->first)) {
+          timeslot[t->first]--;
+        }
+      }   
+      
     }
     State bestState = *this;
-    std::cout << "HERE" << std::endl;
     for (int i = 0; i < 100; ++i) {
       auto nextStates = bestState.generateNextStates();
+      // if you cannot improve the current state end
+      if (nextStates.size() == 0) break;
       bestState = nextStates[0];
       double lowestCost = bestState.getCost();
       for (auto s = nextStates.begin(); s != nextStates.end(); ++s) {
@@ -180,30 +207,41 @@ class State {
           bestState = *s;
         }
       }
-      std::cout << lowestCost << std::endl;
+      //std::cout << i << " " << lowestCost << std::endl;
     }
+    //std::cout << bestState.getCost() << std::endl;
     bestState.print();
     //auto bestState = *this;
    }
 
   void print() {
-    std::ofstream out;
-    out.open("output.txt");
+    std::map<std::string, std::map<std::string, bool>> timeToPeople;
+    //std::ofstream out;
+    //out.open("output.txt");
     int total = 0;
+    std::cout << "Hours Assigned:" << std::endl;
     for (auto p : people) {
-      out << p.first << ": ";
+      std::cout << p.first << ": ";
       for (auto t : people[p.first].assignedTime) {
         if (t.second) {
-          out << t.first << " ";
+          //std::cout << t.first << " ";
+          timeToPeople[t.first][p.first] = true;
         }
       }
-      out << p.second.countHours() / p.second.countFree() << " "; 
-      out << p.second.countHours() << " / ";
-      out << p.second.countFree() << " ";
+      std::cout << p.second.countHours() << " / ";
+      std::cout << p.second.countFree() << " ";
       total += p.second.countHours();
-      out << std::endl;
+      std::cout << std::endl;
     }
-    out << total << std::endl;
+    std::cout << "Total Hours Assigned: " << total << std::endl << std::endl;
+    for (auto time : timeToPeople) {
+      std::cout << time.first << ":" << std::endl;
+      for (auto person : time.second) {
+        std::cout << "\t" << person.first << std::endl;        
+      }
+      std::cout << std::endl;
+    }
+    //out.close();
   }
 
   void addPerson(std::string name) {
@@ -213,7 +251,7 @@ class State {
   }
 
   void addTime(std::string name, std::string timeStr) {
-        std::string day = "";
+    std::string day = "";
     std::string time = "";
     for (auto c : timeStr) {
       if (!isdigit(c)) {
@@ -226,7 +264,7 @@ class State {
       time = "0" + time;
     }
     timeStr = day + time;
-    peopleNeeded[timeStr] = peoplePerSlot;
+    timeslot[timeStr] = peoplePerSlot;
     people[name].addTime(timeStr);
 
     
@@ -238,7 +276,7 @@ class State {
   void calculateCost() {
     cost = 0;
     // If people haven't been allocated to a time
-    for (auto times : peopleNeeded) {
+    for (auto times : timeslot) {
       cost += times.second * 100;
     }
     std::vector<double> vals;
@@ -270,11 +308,12 @@ class State {
 
   double cost = 0;
   int peoplePerSlot = 0;
+  int leadersRequired = 2;
   // Map from persons name to their data
   std::map<std::string, Person> people;
-  std::map<std::string, int> peopleNeeded;
+  std::map<std::string, int> timeslot;
   std::map<std::string, bool> peopleList;
-  std::map<std::string, std::map<std::string, bool>> timeToPeople;
+  
   std::map<std::string, bool> days;
   std::map<int, bool> times;
 
